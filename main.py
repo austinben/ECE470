@@ -1,9 +1,6 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow import keras
-from tensorflow.keras.preprocessing.image import load_img
-from tensorflow.keras.preprocessing.image import img_to_array
-import glob
 
 #load trining data
 train_data = tf.keras.preprocessing.image_dataset_from_directory(
