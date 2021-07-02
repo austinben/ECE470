@@ -1,0 +1,1 @@
+to run model: `python3 model.py`
