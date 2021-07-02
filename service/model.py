@@ -44,3 +44,5 @@ model.compile(
 model.fit(train_data, epochs=10, callbacks=[csv_logger])
 
 model.evaluate(test_data)
+
+model.save('save_model')
