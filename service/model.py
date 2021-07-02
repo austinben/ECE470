@@ -3,6 +3,10 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow import keras
+from tensorflow.keras.callbacks import CSVLogger
+
+#create a logger for our epochs
+csv_logger =  CSVLogger("history_log.csv", append=False)
 
 #load trining data
 train_data = tf.keras.preprocessing.image_dataset_from_directory(
@@ -37,6 +41,6 @@ model.compile(
   loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
   metrics=['accuracy'])
 
-model.fit(train_data, epochs=10)
+model.fit(train_data, epochs=10, callbacks=[csv_logger])
 
 model.evaluate(test_data)
