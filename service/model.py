@@ -42,7 +42,7 @@ model = tf.keras.Sequential([ # sequence of layers of neurons
   tf.keras.layers.MaxPooling2D(), # pooling condenses image to promote features. Takes max value from 2x2?
   tf.keras.layers.Conv2D(31, 3, activation='relu'),
   tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Conv2D(31, 3, activation='relu'),
+  tf.keras.layers.Conv2D(31, 3, activation='relu'), # todo for report: talk about how changing these values affects the loss and accuracy of the model
   tf.keras.layers.MaxPooling2D(),
   tf.keras.layers.Flatten(),
   tf.keras.layers.Dense(128, activation='relu'), # final layer
