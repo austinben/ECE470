@@ -25,11 +25,31 @@ def plotAccuracyLoss(history):
 	plt.show()
 
 def displayActivations(model, image):
-	layer_outputs = [layer.output for layer in model.layers]
+	layer_outputs = [layer.output for layer in model.layers[1:7]]
+	layer_names = [layer.name for layer in model.layers[1:7]]
 	activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
 	activations = activation_model.predict(image)
-	print(activations[0].shape)
-	print()
-	for layer_activation in activations[:7]:
-		plt.matshow(layer_activation[0, :, :, 2], cmap='viridis')
+
+	images_per_row = 4 # number of images per row on the graphs
+
+	for layer_name, layer_activation in zip(layer_names, activations): # for each layer and name
+		# (31, size, size, n_features)
+		n_features = layer_activation.shape[-1]
+		size = layer_activation.shape[1]
+		no_cols = n_features // images_per_row
+		display_grid = np.zeros((size * no_cols, images_per_row * size))
+		for col in range(no_cols):
+			for row in range(images_per_row):
+				channel_image = layer_activation[0, :, :, col * images_per_row + row]
+				# channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
+				# channel_image /= channel_image.std()
+				# channel_image *= 64
+				# channel_image += 128
+				# channel_image = np.clip(channel_image, 0, 255).astype('uint8')
+				display_grid[col * size : (col + 1) * size, row * size : (row + 1) * size] = channel_image
+		scale = 1. / size
+		plt.figure(figsize=(scale * display_grid.shape[1], scale * display_grid.shape[0]))
+		plt.title(layer_name)
+		plt.grid(False)
+		plt.imshow(display_grid, aspect='auto', cmap='viridis')
 	plt.show()
