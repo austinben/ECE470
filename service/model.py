@@ -23,20 +23,26 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint(
 
 #load trining data
 train_data = tf.keras.preprocessing.image_dataset_from_directory(
-	"archive/train",
-	image_size=(200, 200),
-	batch_size=31
+	"archive1/train",
+	image_size=(256, 256),
+	batch_size=31,
+	label_mode='int',
+	shuffle=True,
+	color_mode='rgb'
 )
 
 #load testing data
 test_data = tf.keras.preprocessing.image_dataset_from_directory(
-	"archive/test",
-	image_size=(200, 200),
+	"archive1/test",
+	image_size=(256, 256),
+	label_mode='int',
+	shuffle=True,
+	color_mode='rgb'
 )
 
 # build model
 model = tf.keras.Sequential([ # sequence of layers of neurons
-  tf.keras.layers.Input(shape=(200, 200, 3)),
+  tf.keras.layers.Input(shape=(256, 256, 3)),
   tf.keras.layers.experimental.preprocessing.Rescaling(1./255), # prescale all values to 0-1 instead of 0-255
   tf.keras.layers.Conv2D(31, 3, activation='relu'), # first convolution layer, relu removes any negative values and returns 0 if x < 0 
   tf.keras.layers.MaxPooling2D(), # pooling condenses image to promote features. Takes max value from 2x2?
@@ -63,6 +69,8 @@ if 'fit' in sys.argv:
 	history = model.fit(train_data, epochs=10, callbacks=[csv_logger, checkpoint])
 elif 'new' in sys.argv:
 	history = model.fit(train_data, epochs=10, callbacks=[csv_logger, checkpoint])
+else:
+	model.load_weights(bestFilePath)
 
 if 'display' in sys.argv:
 	if history:
@@ -71,4 +79,11 @@ if 'display' in sys.argv:
 
 model.summary()
 
-model.evaluate(test_data)
+results = np.argmax(model.predict(test_data), axis=1)
+labels = np.concatenate([y for x, y in test_data], axis=0)
+print("Results:")
+print(results)
+print("Labels:")
+print(labels)
+print("Error:")
+print(np.mean(results != labels))
