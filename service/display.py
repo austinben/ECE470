@@ -41,11 +41,6 @@ def displayActivations(model, image):
 		for col in range(no_cols):
 			for row in range(images_per_row):
 				channel_image = layer_activation[0, :, :, col * images_per_row + row]
-				# channel_image -= channel_image.mean() # Post-processes the feature to make it visually palatable
-				# channel_image /= channel_image.std()
-				# channel_image *= 64
-				# channel_image += 128
-				# channel_image = np.clip(channel_image, 0, 255).astype('uint8')
 				display_grid[col * size : (col + 1) * size, row * size : (row + 1) * size] = channel_image
 		scale = 1. / size
 		plt.figure(figsize=(scale * display_grid.shape[1], scale * display_grid.shape[0]))
