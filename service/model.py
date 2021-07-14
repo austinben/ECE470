@@ -6,6 +6,7 @@ from tensorflow import keras
 from tensorflow.keras.callbacks import CSVLogger
 from display import plotAccuracyLoss
 from display import displayActivations
+from PIL import Image
 
 #create a logger for our epochs
 csv_logger =  CSVLogger("history_log.csv", append=False)
@@ -25,10 +26,10 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint(
 train_data = tf.keras.preprocessing.image_dataset_from_directory(
 	"archive1/train",
 	image_size=(256, 256),
-	batch_size=31,
+	batch_size=32,
 	label_mode='int',
 	shuffle=True,
-	color_mode='grayscale'
+	color_mode='rgb'
 )
 
 #load testing data
@@ -37,23 +38,25 @@ test_data = tf.keras.preprocessing.image_dataset_from_directory(
 	image_size=(256, 256),
 	label_mode='int',
 	shuffle=True,
-	color_mode='grayscale'
+	color_mode='rgb'
 )
 
 # build model
 model = tf.keras.Sequential([ # sequence of layers of neurons
-  tf.keras.layers.Input(shape=(256, 256, 1)),
-  tf.keras.layers.experimental.preprocessing.Rescaling(1./255), # prescale all values to 0-1 instead of 0-255
-  tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu'), # first convolution layer, relu removes any negative values and returns 0 if x < 0 
-  tf.keras.layers.MaxPooling2D(), # pooling condenses image to promote features. Takes max value from 2x2?
-  tf.keras.layers.Conv2D(filters=64, kernel_size=3, activation='relu'),
-  tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Conv2D(filters=128, kernel_size=3, activation='relu'), # todo for report: talk about how changing these values affects the loss and accuracy of the model
-  tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Flatten(),
-  tf.keras.layers.Dense(128, activation='relu'), # final layer
-  tf.keras.layers.Dense(128, activation='relu'), # final layer
-  tf.keras.layers.Dense(2)
+	tf.keras.layers.Input(shape=(256, 256, 3)), # define the input shape
+	tf.keras.layers.experimental.preprocessing.Rescaling(1./255), # prescale all values to 0-1 instead of 0-255
+	tf.keras.layers.experimental.preprocessing.RandomRotation((-0.2, 0.3)), # Add a random ration to the image
+	tf.keras.layers.experimental.preprocessing.RandomFlip(), # Add a random flip to the image
+	tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu'),
+	tf.keras.layers.MaxPooling2D(),
+	tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu'),
+	tf.keras.layers.MaxPooling2D(),
+	tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu'),
+	tf.keras.layers.MaxPooling2D(),
+	tf.keras.layers.Flatten(),
+	tf.keras.layers.Dense(128, activation='relu'),
+	tf.keras.layers.Dense(128, activation='relu'),
+	tf.keras.layers.Dense(2)
 ])
 
 # compile model
@@ -64,12 +67,13 @@ model.compile(
 )
 
 history = None
+num_epochs = 20
 
 if 'fit' in sys.argv:
 	model.load_weights(bestFilePath)
-	history = model.fit(train_data, epochs=10, callbacks=[csv_logger, checkpoint])
+	history = model.fit(train_data, epochs=num_epochs, callbacks=[csv_logger, checkpoint])
 elif 'new' in sys.argv:
-	history = model.fit(train_data, epochs=100, callbacks=[csv_logger, checkpoint])
+	history = model.fit(train_data, epochs=num_epochs, callbacks=[csv_logger, checkpoint])
 else:
 	model.load_weights(bestFilePath)
 

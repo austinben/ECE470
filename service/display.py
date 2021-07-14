@@ -25,8 +25,9 @@ def plotAccuracyLoss(history):
 	plt.show()
 
 def displayActivations(model, image):
-	layer_outputs = [layer.output for layer in model.layers[1:7]]
-	layer_names = [layer.name for layer in model.layers[1:7]]
+	layer_outputs = [layer.output for layer in model.layers[3:9]]
+	print(layer_outputs)
+	layer_names = [layer.name for layer in model.layers[3:9]]
 	activation_model = models.Model(inputs=model.input, outputs=layer_outputs)
 	activations = activation_model.predict(image)
 
