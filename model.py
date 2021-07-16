@@ -181,11 +181,12 @@ else:
 if 'display' in sys.argv:
 	if history:
 		plotAccuracyLoss(history)
-	
-	#displayActivations(model, np.array(x_train[0]))
+	img = img_to_array(load_img("original_data/test/yes/Y4.jpg", target_size=(200, 200)))
+	img = np.expand_dims(img, axis=0)
+	img /= 255
+	displayActivations(model, img)
 
 model.summary()
-
 results = np.rint(model.predict(np.array(test_data)))
 print("Final Accuracy:")
 print(np.mean(results == test_labels))
