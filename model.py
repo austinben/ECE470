@@ -22,8 +22,6 @@ if 'preprocess' in sys.argv:
 	x = 1
 	print("---- Cropping Training Images ----")
 	for filename in os.listdir('original_data2/train/yes'):
-		#print(filename)
-
 		img = cv2.imread(os.path.join('original_data2/train/yes', filename))
 		if img is None:
 			print('err - cant read img')
@@ -38,8 +36,6 @@ if 'preprocess' in sys.argv:
 	#crop images to only contain brain section - NO
 	x = 1
 	for filename in os.listdir('original_data2/train/no'):
-		#print(filename)
-
 		img = cv2.imread(os.path.join('original_data2/train/no', filename))
 		if img is None:
 			print('err - cant read img')
@@ -56,38 +52,49 @@ img_shape = (200, 200)
 
 # load train images
 processed_train_path = "./processed/train"
-train_filenames_no = os.listdir(processed_train_path+"/no/")
 train_data = []
 train_labels = []
-for filename in train_filenames_no:
-	img = load_img(processed_train_path+"/no/"+filename).resize(img_shape)
-	train_data.append(img_to_array(img))
-	train_labels.append(0)
 
-train_filenames_yes = os.listdir(processed_train_path+"/yes/")
-for filename in train_filenames_yes:
-	try:
-		img = load_img(processed_train_path+"/yes/"+filename).resize(img_shape)
-	except PIL.UnidentifiedImageError:
-		print(filename)
-	train_data.append(img_to_array(img))
-	train_labels.append(1)
-
-# load test images and make a dataframe
-processed_test_path = "./original_data/test"
-test_filenames_no = os.listdir(processed_test_path+"/no/")
 test_data = []
 test_labels = []
-for filename in test_filenames_no:
-	img = load_img(processed_test_path+"/no/"+filename).resize(img_shape)
-	test_data.append(img_to_array(img))
+
+# load test images and make a dataframe
+for filename in os.listdir('processed/train/no'):
+	img = cv2.imread(os.path.join('processed/train/no', filename))
+	if img is None:
+			print('err - cant read img')
+			continue
+	rs_img = cv2.resize(img,(200,200), interpolation = cv2.INTER_AREA)
+	train_data.append(rs_img)
+	train_labels.append(0)
+
+for filename in os.listdir('processed/train/yes'):
+	img = cv2.imread(os.path.join('processed/train/yes', filename))
+	if img is None:
+			print('err - cant read img')
+			continue
+	rs_img = cv2.resize(img,(200,200), interpolation = cv2.INTER_AREA)
+	train_data.append(rs_img)
+	train_labels.append(1)
+
+for filename in os.listdir('processed/test/no'):
+	img = cv2.imread(os.path.join('processed/test/no', filename))
+	if img is None:
+			print('err - cant read img')
+			continue
+	rs_img = cv2.resize(img,(200,200), interpolation = cv2.INTER_AREA)
+	test_data.append(rs_img)
 	test_labels.append(0)
 
-test_filenames_yes = os.listdir(processed_test_path+"/yes/")
-for filename in test_filenames_yes:
-	img = load_img(processed_test_path+"/yes/"+filename).resize(img_shape)
-	test_data.append(img_to_array(img))
+for filename in os.listdir('processed/test/yes'):
+	img = cv2.imread(os.path.join('processed/test/yes', filename))
+	if img is None:
+			print('err - cant read img')
+			continue
+	rs_img = cv2.resize(img,(200,200), interpolation = cv2.INTER_AREA)
+	test_data.append(rs_img)
 	test_labels.append(1)
+
 
 # shuffle the data
 train_data, train_labels = sklearn.utils.shuffle(train_data, train_labels)
@@ -108,7 +115,7 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint(
 )
 
 # stop the model early if the model is overfitting for 10 epochs.
-earlyStop = EarlyStopping(patience=10)
+#earlyStop = EarlyStopping(patience=10)
 
 # reduce the learning rate when accuracy is not increasing.
 learningRateReduction = ReduceLROnPlateau(
@@ -119,7 +126,7 @@ learningRateReduction = ReduceLROnPlateau(
 	min_lr=0.00001
 )
 
-callbacks = [csv_logger, checkpoint, earlyStop, learningRateReduction]
+callbacks = [csv_logger, checkpoint, learningRateReduction]
 
 print("---- Building Model ----")
 # build model
@@ -155,7 +162,8 @@ model.compile(
 )
 
 history = None
-num_epochs = 30
+num_epochs = 25
+
 
 if 'new' in sys.argv:
 	print("---- Fitting Model ----")
@@ -163,7 +171,7 @@ if 'new' in sys.argv:
 		x=np.array(train_data),
 		y=np.array(train_labels),
 		validation_split=0.25,
-		batch_size=32,
+		batch_size=8,
 		shuffle=True,
 		epochs=num_epochs, 
 		callbacks=callbacks)
