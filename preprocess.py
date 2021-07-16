@@ -5,11 +5,6 @@ import imutils
 import numpy as np
 from keras.preprocessing import image
 from matplotlib import pyplot as plt
-from skimage.morphology import extrema
-from skimage.morphology import watershed as skwater
-from sklearn.model_selection import train_test_split
-from sklearn.utils import shuffle
-
 
 def crop_image(img):
 
@@ -37,45 +32,3 @@ def crop_image(img):
     new_image = img[extTop[1]:extBot[1], extLeft[0]:extRight[0]]
 
     return new_image      
-
-    # save_filename = 'processed/train/no/N' + str(x) + '.jpg'
-    # x +=1
-    # cv2.imwrite(save_filename, im1)
-
-# def prepare_data(directories, img_size):
-#     IMAGES_X = [] 
-#     IMAGES_Y = []
-#     width = img_size
-#     height = img_size
-
-#     for direc in directories:
-#         for filename in os.listdir(direc):
-#             img = cv2.imread(direc + '//' + filename)
-#             if img is None:
-#                 print(err)
-#                 exit(0)
-#             img = crop_image(img) #send to our method to crop
-#             img = cv2.resize(img, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
-#             img = img/255 #normalize
-#             IMAGES_X.append(img) #append to array in a numpy array style
-#             if direc[-3:] == 'yes':
-#                 IMAGES_Y.append([1])
-#             else:
-#                 IMAGES_Y.append([0])
-
-#     IMAGES_X = np.array(IMAGES_X)
-#     IMAGES_Y = np.array(IMAGES_Y)
-
-#     # #shuffle
-#     # IMAGES_X, IMAGES_Y = shuffle(IMAGES_X, IMAGES_Y)
-
-#     return IMAGES_X, IMAGES_Y
-
-
-# def data_split(IMAGES_X, IMAGES_Y):
-#     TRAIN_X, X_TEST_VAL, TRAIN_Y, Y_TEST_VAL = train_test_split(IMAGES_X, IMAGES_Y, test_size=0.2)
-#     X_TEST, X_VAL, Y_TEST, Y_VAL = train_test_split(X_TEST_VAL, Y_TEST_VAL, test_size=0.5)
-
-#     return TRAIN_X, TRAIN_Y, X_VAL, Y_VAL, X_TEST, Y_TEST 
-
-
