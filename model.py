@@ -21,7 +21,7 @@ from preprocess import crop_image
 if 'preprocess' in sys.argv:
 	x = 1
 	print("---- Cropping Training Images ----")
-	for filename in os.listdir('original_data2/train/yes'):
+	for filename in os.listdir('data/train/yes'):
 		img = cv2.imread(os.path.join('original_data2/train/yes', filename))
 		if img is None:
 			print('err - cant read img')
@@ -35,7 +35,7 @@ if 'preprocess' in sys.argv:
 
 	#crop images to only contain brain section - NO
 	x = 1
-	for filename in os.listdir('original_data2/train/no'):
+	for filename in os.listdir('data/train/no'):
 		img = cv2.imread(os.path.join('original_data2/train/no', filename))
 		if img is None:
 			print('err - cant read img')
@@ -181,7 +181,9 @@ else:
 if 'display' in sys.argv:
 	if history:
 		plotAccuracyLoss(history)
-	img = img_to_array(load_img("original_data/test/yes/Y4.jpg", target_size=(200, 200)))
+	img = cv2.imread("data/test/yes/image(4).jpg")
+	img = cv2.resize(img,(200,200), interpolation = cv2.INTER_AREA)
+	img = img_to_array(img)
 	img = np.expand_dims(img, axis=0)
 	img /= 255
 	displayActivations(model, img)

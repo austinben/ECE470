@@ -8,9 +8,26 @@ Derrick Ushko - V00883868
 
 David Bishop - V00884250
 
-first, set up an enable your virtual environment and ensure all related libraries and tools are installed
+## Requirements
 
-to run model with trained weights: `python3 model.py`
-to start a new model: `python3 model.py new`
-to display intermediate activations: `python3 model.py display`
-to display intermediate activations and training/validation graphs: `python3 model.py new display`
+First, install needed requirements, preferably in a virtual environment, by using the following:
+
+`pip install -r requirements.txt`
+
+## Running
+
+### Start a New Model
+
+`python3 model.py new`
+
+### Run Model with Previously Trained Weights
+
+`python3 model.py`
+
+### Fit Model with Previously Trained Weights
+
+`python3 model.py fit`
+
+### Display Intermediate Activations
+
+`python3 model.py display`
